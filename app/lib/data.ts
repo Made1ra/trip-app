@@ -1,6 +1,4 @@
-import { Trip } from '@/app/lib/definitions';
-
-export const initialTrips: Trip[] = [
+export const initialTrips = [
     {
         id: 'lI-vINdPoejBZ17UW4Qus',
         city: 'Berlin',
