@@ -1,9 +1,4 @@
-export type Trip = {
-    id: string;
-    city: string;
-    startDate: string;
-    endDate: string;
-};
+import { Trip } from '@/app/lib/definitions';
 
 export const initialTrips: Trip[] = [
     {

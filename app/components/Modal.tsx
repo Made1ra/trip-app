@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { Trip } from '@/app/lib/data';
+import { Trip } from '@/app/lib/definitions';
 
 type ModalProps = {
     isOpen: boolean;
