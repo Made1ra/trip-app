@@ -13,3 +13,15 @@ export type Countdown = {
     minutes: number;
     seconds: number;
 } | null;
+
+export type TodaysWeather = {
+    icon: string;
+    temp: number;
+} | null;
+
+export type Forecast = {
+    icon: string;
+    datetime: string;
+    tempmax: number;
+    tempmin: number;
+};
