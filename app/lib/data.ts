@@ -1,4 +1,9 @@
-export const cities = ['Berlin', 'Tokyo', 'Barcelona', 'Kyiv'];
+export const cities = [
+    'Berlin',
+    'Tokyo',
+    'Barcelona',
+    'Kyiv'
+];
 
 export const initialTrips = [
     {
