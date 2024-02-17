@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Trip, Countdown } from '@/app/lib/definitions';
+import { Trip, Countdown, TodaysWeather, Forecast } from '@/app/lib/definitions';
 import { initialTrips } from '@/app/lib/data';
 import { getForecast, getTodaysWeather } from '@/app/lib/actions';
 import Modal from '@/app/components/Modal';
@@ -13,7 +13,8 @@ export default function Home() {
   const [trips, setTrips] = useState(initialTrips);
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [todaysWeather, setTodaysWeather] = useState<{ temp: number, icon: string } | null>(null);
+  const [todaysWeather, setTodaysWeather] = useState<TodaysWeather>(null);
+  const [forecast, setForecast] = useState<Forecast[]>([]);
   const [countdown, setCountdown] = useState<Countdown>(null);
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -55,8 +56,6 @@ export default function Home() {
     if (selectedTrip) {
       getTodaysWeather(selectedTrip.city)
         .then((data) => {
-          console.log(selectedTrip, selectedTrip?.city);
-          console.log(data);
           setTodaysWeather({
             temp: data.days[0].temp,
             icon: data.days[0].icon
@@ -67,11 +66,14 @@ export default function Home() {
         });
       getForecast(selectedTrip.city, selectedTrip.startDate, selectedTrip.endDate)
         .then((data) => {
-          console.log(data);
-          setTodaysWeather({
-            temp: data.days[0].temp,
-            icon: data.days[0].icon
-          });
+          setForecast(data.days.map((day: Forecast) => {
+            return {
+              icon: day.icon,
+              datetime: day.datetime,
+              tempmax: day.tempmax,
+              tempmin: day.tempmin
+            };
+          }));
         })
         .catch((error) => {
           console.error(error);
@@ -143,12 +145,15 @@ export default function Home() {
           Add trip
         </button>
       </div>
-      {true && (
+      {selectedTrip && (
         <>
           <div className="flex items-start justify-center w-48 h-96 bg-blue-900">
             <h1 className="text-white text-xl font-bont mt-8">
               {getDayOfTheWeekByDate(new Date().toISOString())}
             </h1>
+            <div>
+              {todaysWeather?.icon}{todaysWeather?.temp}°C
+            </div>
             <div>
               {countdown?.days} {countdown?.hours} {countdown?.minutes} {countdown?.seconds}
             </div>
