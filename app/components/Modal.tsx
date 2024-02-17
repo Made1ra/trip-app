@@ -32,6 +32,13 @@ export default function Modal({ isOpen, onClose, addTrip }: ModalProps) {
         setEndDate(event.target.value);
     }
 
+    function handleClose() {
+        setCity('');
+        setStartDate('');
+        setEndDate('');
+        onClose();
+    }
+
     function handleSave() {
         getImageByCity(city)
             .then((data) => {
@@ -43,10 +50,7 @@ export default function Modal({ isOpen, onClose, addTrip }: ModalProps) {
                     imgSrc: data.results[0].urls.regular,
                     selected: false
                 });
-                setCity('');
-                setStartDate('');
-                setEndDate('');
-                onClose();
+                handleClose();
             })
             .catch((error) => {
                 console.error(error);
@@ -67,7 +71,7 @@ export default function Modal({ isOpen, onClose, addTrip }: ModalProps) {
                     Create trip
                 </h1>
                 <button
-                    onClick={onClose}
+                    onClick={handleClose}
                     className="ml-auto m-8 hover:outline-gray-500"
                 >
                     <svg
@@ -139,7 +143,7 @@ export default function Modal({ isOpen, onClose, addTrip }: ModalProps) {
             </div>
             <div className="flex items-end justify-end ml-auto mr-4">
                 <button
-                    onClick={onClose}
+                    onClick={handleClose}
                     className="rounded text-lg my-4 px-4 py-2 border shadow
                     hover:border-blue-600
                     active:border-blue-700"
