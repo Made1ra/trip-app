@@ -1,12 +1,13 @@
 'use client';
 
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { Trip, Countdown, TodaysWeather, Forecast } from '@/app/lib/definitions';
 import { initialTrips } from '@/app/lib/data';
 import { getForecast, getTodaysWeather } from '@/app/lib/actions';
 import Modal from '@/app/components/Modal';
 import TripCard from '@/app/components/TripCard';
-import { getDayOfTheWeekByDate } from './lib/utils';
+import { getDayOfTheWeekByDate } from '@/app/lib/utils';
 
 export default function Home() {
   const [searchValue, setSearchValue] = useState('');
@@ -81,6 +82,14 @@ export default function Home() {
     }
   }
 
+  // useEffect(() => {
+  //   localStorage.setItem('trips', JSON.stringify(trips));
+  // }, [trips]);
+
+  // useEffect(() => {
+  //   localStorage.setItem('selectedTrip', JSON.stringify(selectedTrip));
+  // }, [selectedTrip]);
+
   useEffect(() => {
     const interval = setInterval(() => {
       if (selectedTrip) {
@@ -147,20 +156,55 @@ export default function Home() {
       </div>
       {selectedTrip && (
         <>
-          <div className="flex items-start justify-center w-48 h-96 bg-blue-900">
-            <h1 className="text-white text-xl font-bont mt-8">
-              {getDayOfTheWeekByDate(new Date().toISOString())}
-            </h1>
-            <div>
-              {todaysWeather?.icon}{todaysWeather?.temp}°C
+          {todaysWeather && (
+            <div className="flex items-start justify-center w-96 h-96 bg-blue-900">
+              <h1 className="text-white text-xl font-bont mt-8">
+                {getDayOfTheWeekByDate(new Date().toISOString())}
+              </h1>
+              <div>
+                {todaysWeather.icon}
+                <Image
+                  src={`/icons/${todaysWeather.icon}.svg`}
+                  alt={todaysWeather.icon}
+                  width={75}
+                  height={75}
+                />
+                {Math.round(todaysWeather.temp)}°C
+              </div>
+              <div className="flex flex-row self-center">
+                <div className="flex-col text-white uppercase m-4">
+                  {countdown?.days} DAYS
+                </div>
+                <div className="flex-col text-white uppercase m-4">
+                  {countdown?.hours} HOURS
+                </div>
+                <div className="flex-col text-white uppercase m-4">
+                  {countdown?.minutes} MINUTES
+                </div>
+                <div className="flex-col text-white uppercase m-4">
+                  {countdown?.seconds} SECONDS
+                </div>
+              </div>
             </div>
-            <div>
-              {countdown?.days} {countdown?.hours} {countdown?.minutes} {countdown?.seconds}
-            </div>
+          )}
+          <div>
+            <h2 className="mt-4 text-lg">
+              Week
+            </h2>
+            {forecast.map((day) => (
+              <div key={day.datetime}>
+                {getDayOfTheWeekByDate(day.datetime)}
+                <Image
+                  src={`/icons/${day.icon}.svg`}
+                  alt={day.icon}
+                  width={50}
+                  height={50}
+                />
+                {day.icon}
+                {Math.round(day.tempmax)}°/{Math.round(day.tempmin)}°
+              </div>
+            ))}
           </div>
-          <h2 className="mt-4 text-lg">
-            Week
-          </h2>
         </>
       )}
     </div>
