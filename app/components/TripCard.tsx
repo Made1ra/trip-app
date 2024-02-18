@@ -23,7 +23,7 @@ export default function TripCard({
     return (
         <div
             onClick={() => onClick(id)}
-            className={`mr-8 ${selected && 'border border-blue-400'}`}
+            className={`w-52 h-80 mr-8 ${selected && 'border border-blue-400'}`}
         >
             <div className="relative w-52 h-52">
                 <Image
