@@ -5,16 +5,17 @@ import { useState, useEffect } from 'react';
 import { Trip, Countdown, TodaysWeather, Forecast } from '@/app/lib/definitions';
 import { initialTrips } from '@/app/lib/data';
 import { getForecast, getTodaysWeather } from '@/app/lib/actions';
-import Modal from '@/app/components/Modal';
-import TripCard from '@/app/components/TripCard';
 import { getDayOfTheWeekByDate } from '@/app/lib/utils';
+import Modal from '@/app/components/modal';
+import TripCard from '@/app/components/trip-card';
+import ForecastCard from '@/app/components/forecast-card';
 
 export default function Home() {
-  const [searchValue, setSearchValue] = useState('');
   const [trips, setTrips] = useState<Trip[]>(localStorage.getItem('trips') ?
     JSON.parse(localStorage.getItem('trips') || '[]') :
     initialTrips
   );
+  const [searchValue, setSearchValue] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [todaysWeather, setTodaysWeather] = useState<TodaysWeather>(null);
   const [forecast, setForecast] = useState<Forecast[]>([]);
@@ -249,26 +250,13 @@ export default function Home() {
           </h2>
           <div className="flex flex-row">
             {forecast.slice(0, 7).map((day) => (
-              <div
+              <ForecastCard
                 key={day.datetime}
-                className="flex flex-col items-center pr-4 py-4"
-              >
-                <p className="text-gray-500">
-                  {getDayOfTheWeekByDate(day.datetime)}
-                </p>
-                <div className="relative w-12 h-12">
-                  <Image
-                    src={`/icons/${day.icon}.svg`}
-                    alt={day.icon}
-                    fill
-                    sizes="100%"
-                    className="my-2"
-                  />
-                </div>
-                <p className="mt-4">
-                  {Math.round(day.tempmax)}°/{Math.round(day.tempmin)}°
-                </p>
-              </div>
+                icon={day.icon}
+                datetime={day.datetime}
+                tempmax={day.tempmax}
+                tempmin={day.tempmin}
+              />
             ))}
           </div>
         </div>
