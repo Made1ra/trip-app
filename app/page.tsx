@@ -12,11 +12,12 @@ import { getDayOfTheWeekByDate } from '@/app/lib/utils';
 export default function Home() {
   const [searchValue, setSearchValue] = useState('');
   const [trips, setTrips] = useState(initialTrips);
-  const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [todaysWeather, setTodaysWeather] = useState<TodaysWeather>(null);
   const [forecast, setForecast] = useState<Forecast[]>([]);
   const [countdown, setCountdown] = useState<Countdown>(null);
+
+  const selectedTrip = trips.find((trip) => trip.selected);
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     setSearchValue(event.target.value);
@@ -53,7 +54,15 @@ export default function Home() {
 
       return trip;
     }));
-    setSelectedTrip(trips.find((trip) => trip.id === id) || null);
+  }
+
+  function sortTripsByStartDate() {
+    setTrips(trips.toSorted((a, b) => {
+      return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+    }));
+  }
+
+  useEffect(() => {
     if (selectedTrip) {
       getTodaysWeather(selectedTrip.city)
         .then((data) => {
@@ -80,7 +89,7 @@ export default function Home() {
           console.error(error);
         });
     }
-  }
+  }, [selectedTrip]);
 
   // useEffect(() => {
   //   localStorage.setItem('trips', JSON.stringify(trips));
@@ -119,17 +128,25 @@ export default function Home() {
       <h1 className="text-xl">
         Weather <b>Forecast</b>
       </h1>
-      <div className="w-80 flex flex-row items-center bg-gray-200 my-8 rounded">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-        </svg>
-        <input
-          type="search"
-          placeholder="Search your trip"
-          value={searchValue}
-          onChange={handleChange}
-          className="ml-2 my-4 p-2 outline-none bg-transparent text-black text-lg placeholder-black"
-        />
+      <div className="flex flex-row items-center">
+        <div className="w-80 flex flex-row items-center bg-gray-200 my-8 rounded">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+          </svg>
+          <input
+            type="search"
+            placeholder="Search your trip"
+            value={searchValue}
+            onChange={handleChange}
+            className="ml-2 my-4 px-2 outline-none bg-transparent text-black text-lg placeholder-black"
+          />
+        </div>
+        <button
+          onClick={sortTripsByStartDate}
+          className="h-max ml-4 bg-gray-200 px-4 py-2 rounded shadow text-black text-lg"
+        >
+          Sort trips by start date
+        </button>
       </div>
       <div className="flex flex-row">
         {trips.filter((trip) => trip.city.toLowerCase().includes(searchValue.toLowerCase())).map((trip) => (
@@ -154,58 +171,108 @@ export default function Home() {
           Add trip
         </button>
       </div>
-      {selectedTrip && (
-        <>
-          {todaysWeather && (
-            <div className="flex items-start justify-center w-96 h-96 bg-blue-900">
-              <h1 className="text-white text-xl font-bont mt-8">
+      {(selectedTrip && todaysWeather) && (
+        <div className="flex float-right mt-[-30rem] mr-12">
+          <div className="flex flex-col items-start justify-center w-[30rem] h-[50rem] bg-indigo-950">
+            <div className="relative -top-40 -right-96 ml-2 flex items-center justify-center w-16 h-16 bg-teal-400 rounded-full">
+              <div className="text-5xl">
+                🐧
+              </div>
+            </div>
+            <div className="self-center">
+              <p className="text-white text-3xl font-bold mt-4">
                 {getDayOfTheWeekByDate(new Date().toISOString())}
-              </h1>
-              <div>
-                {todaysWeather.icon}
+              </p>
+            </div>
+            <div className="flex flex-row p-4 items-center self-center mr-16">
+              <div className="relative w-20 h-20">
                 <Image
                   src={`/icons/${todaysWeather.icon}.svg`}
                   alt={todaysWeather.icon}
-                  width={75}
-                  height={75}
+                  fill
+                  sizes="100%"
+                  className="-ml-4 w-full h-full"
                 />
-                {Math.round(todaysWeather.temp)}°C
               </div>
-              <div className="flex flex-row self-center">
-                <div className="flex-col text-white uppercase m-4">
-                  {countdown?.days} DAYS
-                </div>
-                <div className="flex-col text-white uppercase m-4">
-                  {countdown?.hours} HOURS
-                </div>
-                <div className="flex-col text-white uppercase m-4">
-                  {countdown?.minutes} MINUTES
-                </div>
-                <div className="flex-col text-white uppercase m-4">
-                  {countdown?.seconds} SECONDS
-                </div>
+              <div className="flex flex-row text-6xl font-bold text-white text-center">
+                <p>
+                  {Math.round(todaysWeather.temp)}
+                </p>
+                <sup className="font-thin text-xl">
+                  °C
+                </sup>
               </div>
             </div>
-          )}
-          <div>
-            <h2 className="mt-4 text-lg">
-              Week
-            </h2>
-            {forecast.map((day) => (
-              <div key={day.datetime}>
-                {getDayOfTheWeekByDate(day.datetime)}
-                <Image
-                  src={`/icons/${day.icon}.svg`}
-                  alt={day.icon}
-                  width={50}
-                  height={50}
-                />
-                {day.icon}
-                {Math.round(day.tempmax)}°/{Math.round(day.tempmin)}°
+            <p className="mb-4 self-center text-xl text-white">
+              {selectedTrip.city}
+            </p>
+            <div className="mt-20 flex flex-row self-center">
+              <div className="flex-col text-white uppercase m-4">
+                <p className="text-xl font-bold text-center">
+                  {countdown?.days}
+                </p>
+                <p className="mt-2 text-base font-light uppercase">
+                  DAYS
+                </p>
+              </div>
+              <div className="flex-col text-white uppercase m-4">
+                <p className="text-xl font-bold text-center">
+                  {countdown?.hours}
+                </p>
+                <p className="mt-2 text-base font-light uppercase">
+                  HOURS
+                </p>
+              </div>
+              <div className="flex-col text-white uppercase m-4">
+                <p className="text-xl font-bold text-center">
+                  {countdown?.minutes}
+                </p>
+                <p className="mt-2 text-base font-light uppercase">
+                  MINUTES
+                </p>
+              </div>
+              <div className="flex-col text-white uppercase m-4">
+                <p className="text-xl font-bold text-center">
+                  {countdown?.seconds}
+                </p>
+                <p className="mt-2 text-base font-light uppercase">
+                  SECONDS
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {selectedTrip && (
+        <div className="mt-8">
+          <h2 className="text-lg">
+            {forecast.length > 6 ? 'Week' : `${forecast.length} days`}
+          </h2>
+          <div className="flex flex-row">
+            {forecast.slice(0, 7).map((day) => (
+              <div
+                key={day.datetime}
+                className="flex flex-col items-center pr-4 py-4"
+              >
+                <p className="text-gray-500">
+                  {getDayOfTheWeekByDate(day.datetime)}
+                </p>
+                <div className="relative w-12 h-12">
+                  <Image
+                    src={`/icons/${day.icon}.svg`}
+                    alt={day.icon}
+                    fill
+                    sizes="100%"
+                    className="my-2"
+                  />
+                </div>
+                <p className="mt-4">
+                  {Math.round(day.tempmax)}°/{Math.round(day.tempmin)}°
+                </p>
               </div>
             ))}
           </div>
-        </>
+        </div>
       )}
     </div>
   );
