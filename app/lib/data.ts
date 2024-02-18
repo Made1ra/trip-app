@@ -12,7 +12,7 @@ export const initialTrips = [
         startDate: '2024-07-14',
         endDate: '2024-07-21',
         imgSrc: '/berlin.jpg',
-        selected: false
+        selected: true
     },
     {
         id: 'vxYc2_g2PkLMswHYCV4IC',
