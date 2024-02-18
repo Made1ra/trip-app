@@ -11,7 +11,10 @@ import { getDayOfTheWeekByDate } from '@/app/lib/utils';
 
 export default function Home() {
   const [searchValue, setSearchValue] = useState('');
-  const [trips, setTrips] = useState(initialTrips);
+  const [trips, setTrips] = useState<Trip[]>(localStorage.getItem('trips') ?
+    JSON.parse(localStorage.getItem('trips') || '[]') :
+    initialTrips
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [todaysWeather, setTodaysWeather] = useState<TodaysWeather>(null);
   const [forecast, setForecast] = useState<Forecast[]>([]);
@@ -91,16 +94,8 @@ export default function Home() {
     }
   }, [selectedTrip]);
 
-  // useEffect(() => {
-  //   localStorage.setItem('trips', JSON.stringify(trips));
-  // }, [trips]);
-
-  // useEffect(() => {
-  //   localStorage.setItem('selectedTrip', JSON.stringify(selectedTrip));
-  // }, [selectedTrip]);
-
   useEffect(() => {
-    const interval = setInterval(() => {
+    const intervalId = setInterval(() => {
       if (selectedTrip) {
         const currentDate = new Date().getTime();
         const startDate = new Date(selectedTrip.startDate).getTime();
@@ -114,9 +109,13 @@ export default function Home() {
     }, 1000);
 
     return () => {
-      clearInterval(interval)
+      clearInterval(intervalId)
     };
   }, [selectedTrip]);
+
+  useEffect(() => {
+    localStorage.setItem('trips', JSON.stringify(trips));
+  }, [trips]);
 
   return (
     <div className="m-10">
