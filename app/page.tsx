@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
 import { Trip, Countdown, TodaysWeather, Forecast } from '@/app/lib/definitions';
 import { initialTrips } from '@/app/lib/data';
 import { getForecast, getTodaysWeather } from '@/app/lib/actions';
@@ -8,10 +10,14 @@ import Modal from '@/app/components/modal';
 import TripCard from '@/app/components/trip-card';
 import WeatherCard from '@/app/components/weather-card';
 import ForecastCard from '@/app/components/forecast-card';
+import 'swiper/css';
+import 'swiper/css/navigation';
 
 export default function Home() {
-  const [trips, setTrips] = useState<Trip[]>(localStorage.getItem('trips') ?
-    JSON.parse(localStorage.getItem('trips') || '[]') :
+  const [trips, setTrips] = useState<Trip[]>(typeof window !== 'undefined' ?
+    localStorage.getItem('trips') ?
+      JSON.parse(localStorage.getItem('trips') || '[]') :
+      initialTrips :
     initialTrips
   );
   const [searchValue, setSearchValue] = useState('');
@@ -114,15 +120,17 @@ export default function Home() {
   }, [selectedTrip]);
 
   useEffect(() => {
-    localStorage.setItem('trips', JSON.stringify(trips));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('trips', JSON.stringify(trips));
+    }
   }, [trips]);
 
   return (
     <div className="m-10">
       <Modal
         isOpen={isModalOpen}
-        onClose={closeModal}
         addTrip={addTrip}
+        onClose={closeModal}
       />
       <h1 className="text-xl">
         Weather <b>Forecast</b>
@@ -147,19 +155,33 @@ export default function Home() {
           Sort trips by start date
         </button>
       </div>
-      <div className="flex flex-row">
-        {trips.filter((trip) => trip.city.toLowerCase().includes(searchValue.toLowerCase())).map((trip) => (
-          <TripCard
-            key={trip.id}
-            id={trip.id}
-            city={trip.city}
-            startDate={trip.startDate}
-            endDate={trip.endDate}
-            imgSrc={trip.imgSrc}
-            selected={trip.selected}
-            onClick={updateSelectedTrip}
-          />
-        ))}
+      <div className="flex flex-row items-start justify-start">
+        <div className="flex w-[37.5rem]">
+          <Swiper
+            modules={[Navigation]}
+            slidesPerView={3}
+            scrollbar={{ draggable: true }}
+            grabCursor
+            navigation
+          >
+            {trips
+              .filter((trip) => trip.city.toLowerCase().includes(searchValue.toLowerCase()))
+              .map((trip) => (
+                <SwiperSlide key={trip.id}>
+                  <TripCard
+                    key={trip.id}
+                    id={trip.id}
+                    city={trip.city}
+                    startDate={trip.startDate}
+                    endDate={trip.endDate}
+                    imgSrc={trip.imgSrc}
+                    selected={trip.selected}
+                    onClick={updateSelectedTrip}
+                  />
+                </SwiperSlide>
+              ))}
+          </Swiper>
+        </div>
         <button
           onClick={openModal}
           className="flex flex-col items-center justify-center bg-gray-200 text-lg w-52 h-52"
@@ -175,10 +197,10 @@ export default function Home() {
           icon={todaysWeather.icon}
           temp={todaysWeather.temp}
           city={selectedTrip.city}
-          days={countdown.days}
-          hours={countdown.hours}
-          minutes={countdown.minutes}
-          seconds={countdown.seconds}
+          days={countdown.days > 0 ? countdown.days : 0}
+          hours={countdown.hours > 0 ? countdown.hours : 0}
+          minutes={countdown.minutes > 0 ? countdown.minutes : 0}
+          seconds={countdown.seconds > 0 ? countdown.seconds : 0}
         />
       )}
       {selectedTrip && (
