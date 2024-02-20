@@ -49,7 +49,7 @@ export default function WeatherCard({ icon, temp, city, days, hours, minutes, se
                 </p>
                 <div className="mt-20 flex flex-row self-center">
                     <div className="flex-col text-white uppercase m-4">
-                        <p className="text-xl font-bold text-center">
+                        <p className="text-2xl font-bold text-center">
                             {days}
                         </p>
                         <p className="mt-2 text-base font-light uppercase">
@@ -57,7 +57,7 @@ export default function WeatherCard({ icon, temp, city, days, hours, minutes, se
                         </p>
                     </div>
                     <div className="flex-col text-white uppercase m-4">
-                        <p className="text-xl font-bold text-center">
+                        <p className="text-2xl font-bold text-center">
                             {hours}
                         </p>
                         <p className="mt-2 text-base font-light uppercase">
@@ -65,7 +65,7 @@ export default function WeatherCard({ icon, temp, city, days, hours, minutes, se
                         </p>
                     </div>
                     <div className="flex-col text-white uppercase m-4">
-                        <p className="text-xl font-bold text-center">
+                        <p className="text-2xl font-bold text-center">
                             {minutes}
                         </p>
                         <p className="mt-2 text-base font-light uppercase">
@@ -73,7 +73,7 @@ export default function WeatherCard({ icon, temp, city, days, hours, minutes, se
                         </p>
                     </div>
                     <div className="flex-col text-white uppercase m-4">
-                        <p className="text-xl font-bold text-center">
+                        <p className="text-2xl font-bold text-center">
                             {seconds}
                         </p>
                         <p className="mt-2 text-base font-light uppercase">
