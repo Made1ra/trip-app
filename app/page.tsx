@@ -14,12 +14,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 
 export default function Home() {
-  const [trips, setTrips] = useState<Trip[]>(typeof window !== 'undefined' ?
-    localStorage.getItem('trips') ?
-      JSON.parse(localStorage.getItem('trips') || '[]') :
-      initialTrips :
-    initialTrips
-  );
+  const [trips, setTrips] = useState(initialTrips);
   const [searchValue, setSearchValue] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [todaysWeather, setTodaysWeather] = useState<TodaysWeather>(null);
@@ -118,12 +113,6 @@ export default function Home() {
       clearInterval(intervalId)
     };
   }, [selectedTrip]);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('trips', JSON.stringify(trips));
-    }
-  }, [trips]);
 
   return (
     <div className="m-10">
