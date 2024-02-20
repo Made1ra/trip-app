@@ -2,8 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation } from 'swiper/modules';
-import { Trip, Countdown, TodaysWeather, Forecast } from '@/app/lib/definitions';
+import { Scrollbar, Navigation } from 'swiper/modules';
+import {
+  Trip,
+  Countdown,
+  TodaysWeather,
+  Forecast,
+} from '@/app/lib/definitions';
 import { initialTrips } from '@/app/lib/data';
 import { getForecast, getTodaysWeather } from '@/app/lib/actions';
 import Modal from '@/app/components/modal';
@@ -11,6 +16,7 @@ import TripCard from '@/app/components/trip-card';
 import WeatherCard from '@/app/components/weather-card';
 import ForecastCard from '@/app/components/forecast-card';
 import 'swiper/css';
+import 'swiper/css/scrollbar';
 import 'swiper/css/navigation';
 
 export default function Home() {
@@ -36,34 +42,37 @@ export default function Home() {
   }
 
   function addTrip(trip: Trip) {
-    setTrips([
-      ...trips,
-      trip
-    ]);
+    setTrips([...trips, trip]);
   }
 
   function updateSelectedTrip(id: string) {
-    setTrips(trips.map((trip) => {
-      if (trip.id === id) {
-        return {
-          ...trip,
-          selected: !trip.selected
-        };
-      } else if (trip.selected) {
-        return {
-          ...trip,
-          selected: false
-        };
-      }
+    setTrips(
+      trips.map((trip) => {
+        if (trip.id === id) {
+          return {
+            ...trip,
+            selected: !trip.selected
+          };
+        } else if (trip.selected) {
+          return {
+            ...trip,
+            selected: false
+          };
+        }
 
-      return trip;
-    }));
+        return trip;
+      })
+    );
   }
 
   function sortTripsByStartDate() {
-    setTrips(trips.toSorted((a, b) => {
-      return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
-    }));
+    setTrips(
+      trips.toSorted((a, b) => {
+        return (
+          new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+        );
+      })
+    );
   }
 
   useEffect(() => {
@@ -78,16 +87,22 @@ export default function Home() {
         .catch((error) => {
           console.error(error);
         });
-      getForecast(selectedTrip.city, selectedTrip.startDate, selectedTrip.endDate)
+      getForecast(
+        selectedTrip.city,
+        selectedTrip.startDate,
+        selectedTrip.endDate
+      )
         .then((data) => {
-          setForecast(data.days.map((day: Forecast) => {
-            return {
-              icon: day.icon,
-              datetime: day.datetime,
-              tempmax: day.tempmax,
-              tempmin: day.tempmin
-            };
-          }));
+          setForecast(
+            data.days.map((day: Forecast) => {
+              return {
+                icon: day.icon,
+                datetime: day.datetime,
+                tempmax: day.tempmax,
+                tempmin: day.tempmin
+              };
+            })
+          );
         })
         .catch((error) => {
           console.error(error);
@@ -102,15 +117,19 @@ export default function Home() {
         const startDate = new Date(selectedTrip.startDate).getTime();
         const difference = startDate - currentDate;
         const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const hours = Math.floor(
+          (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const minutes = Math.floor(
+          (difference % (1000 * 60 * 60)) / (1000 * 60)
+        );
         const seconds = Math.floor((difference % (1000 * 60)) / 1000);
         setCountdown({ days, hours, minutes, seconds });
       }
     }, 1000);
 
     return () => {
-      clearInterval(intervalId)
+      clearInterval(intervalId);
     };
   }, [selectedTrip]);
 
@@ -126,8 +145,19 @@ export default function Home() {
       </h1>
       <div className="flex flex-row items-center">
         <div className="w-80 flex flex-row items-center bg-gray-200 my-8 rounded">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-6 h-6 ml-5"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+            />
           </svg>
           <input
             type="search"
@@ -145,16 +175,19 @@ export default function Home() {
         </button>
       </div>
       <div className="flex flex-row items-start justify-start">
-        <div className="flex w-[37.5rem]">
+        <div className="flex w-[37.5rem] mr-3">
           <Swiper
-            modules={[Navigation]}
+            modules={[Navigation, Scrollbar]}
+            spaceBetween={10}
             slidesPerView={3}
-            scrollbar={{ draggable: true }}
-            grabCursor
             navigation
+            pagination={{ clickable: true }}
+            scrollbar={{ draggable: true }}
           >
             {trips
-              .filter((trip) => trip.city.toLowerCase().includes(searchValue.toLowerCase()))
+              .filter((trip) =>
+                trip.city.toLowerCase().includes(searchValue.toLowerCase())
+              )
               .map((trip) => (
                 <SwiperSlide key={trip.id}>
                   <TripCard
@@ -175,13 +208,24 @@ export default function Home() {
           onClick={openModal}
           className="flex flex-col items-center justify-center bg-gray-200 text-lg w-52 h-52"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 4.5v15m7.5-7.5h-15"
+            />
           </svg>
           Add trip
         </button>
       </div>
-      {(selectedTrip && todaysWeather && countdown) && (
+      {selectedTrip && todaysWeather && countdown && (
         <WeatherCard
           icon={todaysWeather.icon}
           temp={todaysWeather.temp}

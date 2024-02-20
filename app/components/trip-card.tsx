@@ -23,9 +23,9 @@ export default function TripCard({
     return (
         <div
             onClick={() => onClick(id)}
-            className={`w-52 h-80 mr-8 ${selected && 'border border-blue-400'}`}
+            className={`w-full h-80 ${selected && 'border border-blue-400'}`}
         >
-            <div className="relative w-52 h-52">
+            <div className="relative h-52">
                 <Image
                     src={imgSrc}
                     alt={city}
@@ -35,9 +35,7 @@ export default function TripCard({
                     className="w-full h-full"
                 />
             </div>
-            <p className="m-4 text-base">
-                {city}
-            </p>
+            <p className="m-4 text-base">{city}</p>
             <p className="m-4 text-sm text-gray-500">
                 {formatDate(startDate)} - {formatDate(endDate)}
             </p>
