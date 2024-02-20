@@ -175,11 +175,11 @@ export default function Home() {
         </button>
       </div>
       <div className="flex flex-row items-start justify-start">
-        <div className="flex w-[37.5rem] mr-3">
+        <div className={`flex ${searchValue ? 'w-[35rem]' : 'w-[37.5rem]'} mr-3`}>
           <Swiper
             modules={[Navigation, Scrollbar]}
             spaceBetween={10}
-            slidesPerView={3}
+            slidesPerView={searchValue ? 1 : 3}
             navigation
             pagination={{ clickable: true }}
             scrollbar={{ draggable: true }}
