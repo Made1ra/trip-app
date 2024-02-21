@@ -239,18 +239,28 @@ export default function Home() {
       {selectedTrip && (
         <div className="mt-8">
           <h2 className="text-lg">
-            {forecast.length > 6 ? 'Week' : `${forecast.length} days`}
+            {forecast.length === 7 ? 'Week' : `${forecast.length} days`}
           </h2>
-          <div className="flex flex-row">
-            {forecast.slice(0, 7).map((day) => (
-              <ForecastCard
-                key={day.datetime}
-                icon={day.icon}
-                datetime={day.datetime}
-                tempmax={day.tempmax}
-                tempmin={day.tempmin}
-              />
-            ))}
+          <div className="flex flex-row w-[52.5rem]">
+            <Swiper
+              modules={[Navigation, Scrollbar]}
+              spaceBetween={10}
+              slidesPerView={searchValue ? 1 : 3}
+              navigation
+              pagination={{ clickable: true }}
+              scrollbar={{ draggable: true }}
+            >
+              {forecast.map((day) => (
+                <SwiperSlide key={day.datetime}>
+                  <ForecastCard
+                    icon={day.icon}
+                    datetime={day.datetime}
+                    tempmax={day.tempmax}
+                    tempmin={day.tempmin}
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
           </div>
         </div>
       )}
