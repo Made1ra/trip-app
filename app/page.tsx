@@ -245,7 +245,7 @@ export default function Home() {
             <Swiper
               modules={[Navigation, Scrollbar]}
               spaceBetween={10}
-              slidesPerView={searchValue ? 1 : 3}
+              slidesPerView={3}
               navigation
               pagination={{ clickable: true }}
               scrollbar={{ draggable: true }}
