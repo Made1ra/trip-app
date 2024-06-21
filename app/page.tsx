@@ -1,27 +1,27 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Scrollbar, Navigation } from 'swiper/modules';
+import { useState, useEffect } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Scrollbar, Navigation } from "swiper/modules";
 import {
   Trip,
   Countdown,
   TodaysWeather,
   Forecast,
-} from '@/app/lib/definitions';
-import { initialTrips } from '@/app/lib/data';
-import { getForecast, getTodaysWeather } from '@/app/lib/actions';
-import Modal from '@/app/components/modal';
-import TripCard from '@/app/components/trip-card';
-import WeatherCard from '@/app/components/weather-card';
-import ForecastCard from '@/app/components/forecast-card';
-import 'swiper/css';
-import 'swiper/css/scrollbar';
-import 'swiper/css/navigation';
+} from "@/app/lib/definitions";
+import { initialTrips } from "@/app/lib/data";
+import { getForecast, getTodaysWeather } from "@/app/lib/actions";
+import Modal from "@/app/components/modal";
+import TripCard from "@/app/components/trip-card";
+import WeatherCard from "@/app/components/weather-card";
+import ForecastCard from "@/app/components/forecast-card";
+import "swiper/css";
+import "swiper/css/scrollbar";
+import "swiper/css/navigation";
 
 export default function Home() {
   const [trips, setTrips] = useState(initialTrips);
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [todaysWeather, setTodaysWeather] = useState<TodaysWeather>(null);
   const [forecast, setForecast] = useState<Forecast[]>([]);
@@ -51,12 +51,12 @@ export default function Home() {
         if (trip.id === id) {
           return {
             ...trip,
-            selected: !trip.selected
+            selected: !trip.selected,
           };
         } else if (trip.selected) {
           return {
             ...trip,
-            selected: false
+            selected: false,
           };
         }
 
@@ -81,7 +81,7 @@ export default function Home() {
         .then((data) => {
           setTodaysWeather({
             temp: data.days[0].temp,
-            icon: data.days[0].icon
+            icon: data.days[0].icon,
           });
         })
         .catch((error) => {
@@ -99,7 +99,7 @@ export default function Home() {
                 icon: day.icon,
                 datetime: day.datetime,
                 tempmax: day.tempmax,
-                tempmin: day.tempmin
+                tempmin: day.tempmin,
               };
             })
           );
@@ -135,11 +135,7 @@ export default function Home() {
 
   return (
     <div className="m-10">
-      <Modal
-        isOpen={isModalOpen}
-        addTrip={addTrip}
-        onClose={closeModal}
-      />
+      <Modal isOpen={isModalOpen} addTrip={addTrip} onClose={closeModal} />
       <h1 className="text-xl">
         Weather <b>Forecast</b>
       </h1>
@@ -175,7 +171,9 @@ export default function Home() {
         </button>
       </div>
       <div className="flex flex-row items-start justify-start">
-        <div className={`flex ${searchValue ? 'w-[35rem]' : 'w-[37.5rem]'} mr-3`}>
+        <div
+          className={`flex ${searchValue ? "w-[35rem]" : "w-[37.5rem]"} mr-3`}
+        >
           <Swiper
             modules={[Navigation, Scrollbar]}
             spaceBetween={10}
@@ -239,7 +237,7 @@ export default function Home() {
       {selectedTrip && (
         <div className="mt-8">
           <h2 className="text-lg">
-            {forecast.length === 7 ? 'Week' : `${forecast.length} days`}
+            {forecast.length === 7 ? "Week" : `${forecast.length} days`}
           </h2>
           <div className="flex flex-row w-[52.5rem]">
             <Swiper
